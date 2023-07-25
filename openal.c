@@ -3,15 +3,27 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define FREQ 220
+#define RATE 44100
+
 ALCdevice *device;
 ALCcontext *context;
 ALuint sources[2];
 ALuint buffers[1];
+short *freqs[126];
 
 int init_openal() {
 	ALCenum error;
-	int i;
-	short bufferData[44100/440];
+	int i, j;
+	short *bufferData;
+
+	for(j = 0; j < 126; j++) {
+		freqs[j] = malloc(sizeof(short) * RATE);
+		for(i = 0; i < RATE; i++)
+			freqs[j][i] = (short)(32767.0 * sin(i * M_PI_2 * (FREQ + j * 3) / RATE));
+	}
+
+	bufferData = freqs[0];
 
 	device = alcOpenDevice(NULL);
 	if (device == NULL)
@@ -80,9 +92,7 @@ int init_openal() {
 	if (error != AL_NO_ERROR)
 		return -28;
 
-	for(i = 0; i < (44100/440); i++)
-		bufferData[i] = (short)(32767.0 * sin(i * M_2_PI * 440.0 / 44100.0));
-	alBufferData(buffers[0], AL_FORMAT_MONO16, bufferData, sizeof(bufferData), 44100);
+	alBufferData(buffers[0], AL_FORMAT_MONO16, bufferData, 44100 * sizeof(short), RATE);
 	error = alGetError();
 	if (error != AL_NO_ERROR)
 		return -29;
@@ -108,6 +118,18 @@ int init_openal() {
 		return -48;
 
 	return 0;
+}
+
+void set_openal(double **mat) {
+	short bufferData[44100];
+	int i, j;
+
+	for(j = 0; j < 126; j++) {
+		for(i = 0; i < 44100; i++)
+			bufferData[i] = (mat[9][j] / (300.0 * 16.0)) * freqs[j][i];
+	}
+
+	alBufferData(buffers[0], AL_FORMAT_MONO16, bufferData, 44100 * sizeof(short), RATE);
 }
 
 void delete_openal() {
