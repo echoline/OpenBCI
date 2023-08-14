@@ -192,7 +192,7 @@ void set_openal(double **mat) {
 
 		for(j = 0; j < 126; j++) {
 			for(i = 0; i < LEN; i++)
-				bufferData[i] += (mat[9][j] / (300.0 * 16.0)) * freqs[j][i];
+				bufferData[i] += (mat[k][j] / (300.0 * 16.0)) * freqs[j][i];
 		}
 
 		alSourceStop(sources[k]);
