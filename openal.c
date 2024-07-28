@@ -18,8 +18,8 @@ int init_openal() {
 	ALCenum error;
 	int i, j;
 
-	freqs = malloc(sizeof(short*) * 126);
-	for(j = 0; j < 126; j++) {
+	freqs = malloc(sizeof(short*) * 125);
+	for(j = 0; j < 125; j++) {
 		freqs[j] = malloc(sizeof(short) * LEN);
 		for(i = 0; i < LEN; i++)
 			freqs[j][i] = (short)(32767.0 * sin(i * M_PI * 2.0 * (FREQ + j * 3) / LEN));
@@ -190,7 +190,7 @@ void set_openal(double **mat) {
 	for(k = 0; k < 16; k++) {
 		memset(bufferData, 0, sizeof(bufferData));
 
-		for(j = 0; j < 126; j++) {
+		for(j = 0; j < 125; j++) {
 			for(i = 0; i < LEN; i++)
 				bufferData[i] += (mat[k][j] / (300.0 * 16.0)) * freqs[j][i];
 		}

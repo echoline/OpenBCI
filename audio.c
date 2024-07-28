@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
 	int listener = init_udp_listen(12345);
 
 	while (1) {
-		r = read(listener, buf, 65536);
+		r = recv(listener, buf, 65536, 0);
 		mat = parse_fft_json(buf);
 		set_openal(mat);
 		for (r = 0; r < 16; r++)
