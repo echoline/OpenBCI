@@ -7,10 +7,13 @@ double** parse_fft_json(char *s) {
 	int m, n;
 	float max = 0;
 
-	if (strncmp(s, "{\"type\":\"fft\",\"data\":", 21) != 0)
+	if (strncmp(s, "{\"type\":\"fft\",\"data\":", 21) == 0)
+		s += 21;
+	else if (strncmp(s, "{\"type\": \"fft\", \"data\": ", 24) == 0)
+		s += 24;
+	else
 		return NULL;
 
-	s += 21;
 	if (*s != '[')
 		return NULL;
 	m = 0;
@@ -32,7 +35,7 @@ double** parse_fft_json(char *s) {
 				s++;
 			n++;
 		} while(*s != ']');
-		while(*s == ']' || *s == ',')
+		while(*s == ']' || *s == ',' || *s == ' ')
 			s++;
 	}
 
